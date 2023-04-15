@@ -42,17 +42,19 @@ function init(data) {
 
 function buildMetadata(sample) {
     d3.json(url).then((data) => {
-        let metadata = data.data; // Get the metadata from the data
-        let labels = data.meta.view.columns.map((column) => column.name); // Get the labels for the metadata from the data
-        let result = metadata.filter((row) => row[17] == sample)[0]; // Filter the metadata to find the row with the given animal ID
-        let keyValuePairs = labels.map((label, index) => [label, result[index]]); // Create key-value pairs from the labels and data for the selected animal
-        let metadataPanel = d3.select("#sample-metadata"); // Select the metadata panel using its ID
-        metadataPanel.html(""); // Clear the metadata panel
-        keyValuePairs.forEach((pair) => {
-            metadataPanel.append("h5").text(`${pair[0]}: ${pair[1]}`); // Add the label-value pairs as headings to the metadata panel
-        });
+      let metadata = data.data; // Get the metadata from the data
+      let labels = data.meta.view.columns.map((column) => column.name); // Get the labels for the metadata from the data
+      let result = metadata.filter((row) => row[17] == sample)[0]; // Filter the metadata to find the row with the given animal ID
+      let excludeKeys = ["sid", "id", "position", "created_at", "created_meta", "updated_at", "updated_meta", "meta", "Location", "Zip Codes"]; // Define an array of keys to exclude
+      let keyValuePairs = labels.map((label, index) => [label, result[index]]); // Create key-value pairs from the labels and data for the selected animal
+      keyValuePairs = keyValuePairs.filter(([key, value]) => !excludeKeys.includes(key)); // Filter out the keys to exclude
+      let metadataPanel = d3.select("#sample-metadata"); // Select the metadata panel using its ID
+      metadataPanel.html(""); // Clear the metadata panel
+      keyValuePairs.forEach((pair) => {
+        metadataPanel.append("h5").text(`${pair[0]}: ${pair[1]}`); // Add the label-value pairs as headings to the metadata panel
+      });
     });
-};
+  };
 
 function optionChanged(value) {
 
