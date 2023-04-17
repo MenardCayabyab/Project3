@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Line Chart</title>
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='line_chart.css') }}">
+</head>
+<body>
+  <div id="line-chart"></div>
+
+  <script>
+    // Set the dimensions of the chart
+    var margin = { top: 10, right: 30, bottom: 30, left: 60 },
+        width = 600 - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom;
+
+    // Add the SVG element to the DOM
+    var svg = d3.select("#line-chart")
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    // Set up the x and y scales
+    var x = d3.scaleTime().range([0, width]);
+    var y = d3.scaleLinear().range([height, 0]);
+
+    // Set up the x and y axes
+    var xAxis = d3.axisBottom(x);
+    var yAxis = d3.axisLeft(y);
+
+    // Create a line generator
+    var line = d3.line()
+        .x(function(d) { return x(new Date(d.year)); })
+        .y(function(d) { return y(d.intake_count); });
+
+    // Load the data from the Flask endpoint
+    d3.json("/api/intake", function(error, data) {
+      if (error) throw error;
+
+      // Format the date/time
+      var parseTime = d3.timeParse("%Y-%m-%dT%H:%M:%S.%LZ");
+      data.forEach(function(d) {
+        d.year = parseTime(d.year);
+        d.intake_count = +d.intake_count;
+      });
+
+      // Update the domain of the x and y scales
+      x.domain(d3.extent(data, function(d) { return d.year; }));
+      y.domain([0, d3.max(data, function(d) { return d.intake_count; })]);
+
+      // Add the x and y axes to the chart
+      svg.append("g")
+          .attr("transform", "translate(0," + height + ")")
+          .call(xAxis);
+
+      svg.append("g")
+          .call(yAxis);
+
+      // Add the line to the chart
+      svg.append("path")
+          .datum(data)
+          .attr("fill", "none")
+          .attr("stroke", "steelblue")
+          .attr("stroke-width", 1.5)
+          .attr("d", line);
+    });
+  </script>
+</body>
+</html>
