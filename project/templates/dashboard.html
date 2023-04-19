@@ -2,11 +2,44 @@
 <html>
 <head>
     <title>Pet Shelter Dashboard</title>
-    <script>
-        function submitForm() {
-            document.getElementById("filter-form").submit();
+    <style>
+        /* CSS for table styling */
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+            border: 1px solid #ddd;
         }
-    </script>
+
+        th {
+            background-color: #4b61f2;
+            color: white;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        /* CSS for fixing table headers */
+        .table-wrapper {
+            position: relative;
+            height: 350px;
+            overflow: auto;
+        }
+
+        .table-wrapper thead {
+            position: sticky;
+            top: 0;
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
 </head>
 <body>
   <h1>Pet Adoption Dashboard</h1>
@@ -24,45 +57,44 @@
     <input type="submit" value="Filter">
   </form>
   {% if data %}
-  <table>
-    <tr>
-      <th>ID</th>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Color</th>
-      <th>Sex</th>
-      <th>Size</th>
-      <th>Date of Birth</th>
-      <th>Impound Number</th>
-      <th>Kennel Number</th>
-      <th>Animal ID</th>
-      <th>Intake Date</th>
-      <th>Outcome Date</th>
-      <th>Days in Shelter</th>
-      <th>Intake Type</th>
-      <th>Intake Subtype</th>
-      <th>Outcome Type</th>
-      <th>Outcome Subtype</th>
-      <th>Intake Condition</th>
-      <th>Outcome Condition</th>
-      <th>Intake Jurisdiction</th>
-      <th>Outcome Jurisdiction</th>
-      <th>Outcome Zip Code</th>
-      <th>Count</th>
-      <th>Latitude</th>
-      <th>Longitude</th>
-      <th>Age</th>
-      <th>Primary Breed</th>
-      <th>Secondary Breed</th>
-    </tr>
-    {% for row in data %}
-    <tr>
-      {% for column in row %}
-      <td>{{ column }}</td>
-      {% endfor %}
-    </tr>
-    {% endfor %}
-  </table>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Color</th>
+          <th>Sex</th>
+          <th>Size</th>
+          <th>Date of Birth</th>
+          <th>Impound Number</th>
+          <th>Kennel Number</th>
+          <th>Animal ID</th>
+          <th>Intake Date</th>
+          <th>Days in Shelter</th>
+          <th>Intake Type</th>
+          <th>Intake Subtype</th>
+          <th>Outcome Type</th>
+          <th>Outcome Subtype</th>
+          <th>Intake Condition</th>
+          <th>Outcome Condition</th>
+          <th>Intake Jurisdiction</th>
+          <th>Outcome Jurisdiction</th>
+          <th>Outcome Zip Code</th>
+          <th>Secondary Breed</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in data %}
+        <tr>
+          {% for column in row %}
+          <td>{{ column }}</td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
   {% endif %}
 </body>
 </html>
