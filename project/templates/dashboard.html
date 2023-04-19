@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pet Shelter Dashboard</title>
+    <script>
+        function submitForm() {
+            document.getElementById("filter-form").submit();
+        }
+    </script>
+</head>
+<body>
+  <h1>Pet Adoption Dashboard</h1>
+  <form method="POST">
+    <select name="pet_type" id="pet_type">
+      {% for pet_type in pet_types %}
+      <option value="{{ pet_type }}" {% if pet_type == selected_pet_type %}selected{% endif %}>{{ pet_type }}</option>
+      {% endfor %}
+    </select>
+    <select name="primary_breed" id="primary_breed">
+      {% for primary_breed in primary_breeds %}
+      <option value="{{ primary_breed }}" {% if primary_breed == selected_primary_breed %}selected{% endif %}>{{ primary_breed }}</option>
+      {% endfor %}
+    </select>
+    <input type="submit" value="Filter">
+  </form>
+  {% if data %}
+  <table>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Color</th>
+      <th>Sex</th>
+      <th>Size</th>
+      <th>Date of Birth</th>
+      <th>Impound Number</th>
+      <th>Kennel Number</th>
+      <th>Animal ID</th>
+      <th>Intake Date</th>
+      <th>Outcome Date</th>
+      <th>Days in Shelter</th>
+      <th>Intake Type</th>
+      <th>Intake Subtype</th>
+      <th>Outcome Type</th>
+      <th>Outcome Subtype</th>
+      <th>Intake Condition</th>
+      <th>Outcome Condition</th>
+      <th>Intake Jurisdiction</th>
+      <th>Outcome Jurisdiction</th>
+      <th>Outcome Zip Code</th>
+      <th>Count</th>
+      <th>Latitude</th>
+      <th>Longitude</th>
+      <th>Age</th>
+      <th>Primary Breed</th>
+      <th>Secondary Breed</th>
+    </tr>
+    {% for row in data %}
+    <tr>
+      {% for column in row %}
+      <td>{{ column }}</td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+</body>
+</html>
