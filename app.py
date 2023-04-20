@@ -1,9 +1,10 @@
 from flask import Flask, render_template, request
+from collections import Counter
 import sqlite3
 
 app = Flask(__name__)
 
-DATABASE = './resources/Project3.db'
+DATABASE = 'Project3.db'
 
 def query_database(query, args=()):
     conn = sqlite3.connect(DATABASE)
@@ -13,6 +14,10 @@ def query_database(query, args=()):
     cur.close()
     conn.close()
     return rows
+
+def count_outcome_types(data):
+    outcome_types = [row[13] for row in data if row[13] is not None]
+    return dict(Counter(outcome_types))
 
 @app.route('/', methods=['GET', 'POST'])
 def dashboard():
@@ -29,6 +34,9 @@ def dashboard():
         
         # Retrieve the matching data from the database
         data = query_database("SELECT ID, Name, Color, Sex, Size, DateOfBirth, ImpoundNumber, KennelNumber, AnimalID, IntakeDate, DaysInShelter, IntakeType, IntakeSubtype, OutcomeType, OutcomeSubtype, IntakeCondition, OutcomeCondition, IntakeJurisdiction, OutcomeJurisdiction, OutcomeZipCode, SecondaryBreed FROM project3 WHERE Type = ? AND PrimaryBreed = ?", (pet_type, primary_breed))
+
+        # Count the occurrences of each outcome type
+        outcome_types_distribution = count_outcome_types(data)
         
         # Set the selected options for the dropdown menus
         selected_pet_type = pet_type
@@ -38,7 +46,7 @@ def dashboard():
         primary_breeds = [row[0] for row in query_database("SELECT DISTINCT PrimaryBreed FROM project3 WHERE Type = ?", (pet_type,))]
         
         # Render the template with the matching data
-        return render_template('dashboard.html', pet_types=pet_types, primary_breeds=primary_breeds, selected_pet_type=selected_pet_type, selected_primary_breed=selected_primary_breed, data=data)
+        return render_template('dashboard.html', pet_types=pet_types, primary_breeds=primary_breeds, selected_pet_type=selected_pet_type, selected_primary_breed=selected_primary_breed, data=data, outcome_types_distribution=outcome_types_distribution)
     else:
         # Get the list of primary breeds for the default pet type
         primary_breeds = [row[0] for row in query_database("SELECT DISTINCT PrimaryBreed FROM project3 WHERE Type = ?", (pet_types[0],))]
@@ -46,8 +54,11 @@ def dashboard():
         # Retrieve the matching data from the database for the default pet type and primary breed
         data = query_database("SELECT ID, Name, Color, Sex, Size, DateOfBirth, ImpoundNumber, KennelNumber, AnimalID, IntakeDate, DaysInShelter, IntakeType, IntakeSubtype, OutcomeType, OutcomeSubtype, IntakeCondition, OutcomeCondition, IntakeJurisdiction, OutcomeJurisdiction, OutcomeZipCode, SecondaryBreed FROM project3 WHERE Type = ? AND PrimaryBreed = ?", (pet_types[0], primary_breeds[0]))
         
+        # Calculate outcome_types_distribution
+        outcome_types_distribution = count_outcome_types(data)
+
         # Render the form with the dropdown menus
-        return render_template('dashboard.html', pet_types=pet_types, primary_breeds=primary_breeds, selected_pet_type=pet_types[0], selected_primary_breed=primary_breeds[0], data=data)
+        return render_template('dashboard.html', data=data, pet_types=pet_types, primary_breeds=primary_breeds, selected_pet_type=selected_pet_type, selected_primary_breed=selected_primary_breed, outcome_types_distribution=outcome_types_distribution)
 
 if __name__ == '__main__':
     app.run(debug=True)

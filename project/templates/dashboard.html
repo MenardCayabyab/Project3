@@ -40,6 +40,7 @@
             color: white;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <h1>Pet Adoption Dashboard</h1>
@@ -95,6 +96,42 @@
       </tbody>
     </table>
   </div>
+  <div id="outcome-types-chart">
+    <canvas id="myChart"></canvas>
+  </div>
   {% endif %}
 </body>
+<script>
+    const outcomeTypesDistribution = {{ outcome_types_distribution | tojson }};
+    const ctx = document.getElementById('myChart').getContext('2d');
+
+    const labels = Object.keys(outcomeTypesDistribution);
+    const data = Object.values(outcomeTypesDistribution);
+
+    const chartData = {
+        labels: labels,
+        datasets: [{
+            label: 'Outcome Types Distribution',
+            data: data,
+            backgroundColor: 'rgba(75, 97, 242, 0.2)',
+            borderColor: 'rgba(75, 97, 242, 1)',
+            borderWidth: 1
+        }]
+    };
+
+    const config = {
+        type: 'bar',
+        data: chartData,
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    };
+
+    const myChart = new Chart(ctx, config);
+</script>
+
 </html>
