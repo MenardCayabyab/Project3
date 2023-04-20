@@ -1,5 +1,8 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
+import json
+from datetime import datetime
 from collections import Counter
+
 import sqlite3
 
 app = Flask(__name__)
@@ -8,12 +11,14 @@ DATABASE = 'Project3.db'
 
 def query_database(query, args=()):
     conn = sqlite3.connect(DATABASE)
+    conn.row_factory = sqlite3.Row  # Add this line
     cur = conn.cursor()
     cur.execute(query, args)
     rows = cur.fetchall()
     cur.close()
     conn.close()
     return rows
+
 
 def count_outcome_types(data):
     outcome_types = [row[13] for row in data if row[13] is not None]
@@ -44,9 +49,23 @@ def dashboard():
         
         # Get the list of primary breeds for the selected pet type
         primary_breeds = [row[0] for row in query_database("SELECT DISTINCT PrimaryBreed FROM project3 WHERE Type = ?", (pet_type,))]
+
+        # Calculate scatter_plot_data
+        time_filter = 'month'
+        date_format = "%Y-%m"
         
+        query = '''
+            SELECT strftime(?, IntakeDate) as time_period, COUNT(*) as count
+            FROM project3
+            GROUP BY time_period
+            ORDER BY time_period
+        '''
+        result = query_database(query, (date_format,))
+
+        scatter_plot_data = [{'time_period': row['time_period'], 'count': row['count']} for row in result]
+
         # Render the template with the matching data
-        return render_template('dashboard.html', pet_types=pet_types, primary_breeds=primary_breeds, selected_pet_type=selected_pet_type, selected_primary_breed=selected_primary_breed, data=data, outcome_types_distribution=outcome_types_distribution)
+        return render_template('dashboard.html', pet_types=pet_types, primary_breeds=primary_breeds, selected_pet_type=selected_pet_type, selected_primary_breed=selected_primary_breed, data=data, outcome_types_distribution=outcome_types_distribution, scatter_plot_data=scatter_plot_data)
     else:
         # Get the list of primary breeds for the default pet type
         primary_breeds = [row[0] for row in query_database("SELECT DISTINCT PrimaryBreed FROM project3 WHERE Type = ?", (pet_types[0],))]
@@ -57,8 +76,20 @@ def dashboard():
         # Calculate outcome_types_distribution
         outcome_types_distribution = count_outcome_types(data)
 
-        # Render the form with the dropdown menus
-        return render_template('dashboard.html', data=data, pet_types=pet_types, primary_breeds=primary_breeds, selected_pet_type=selected_pet_type, selected_primary_breed=selected_primary_breed, outcome_types_distribution=outcome_types_distribution)
+        time_filter = 'month'
+        date_format = "%Y-%m"
+        
+        query = '''
+            SELECT strftime(?, IntakeDate) as time_period, COUNT(*) as count
+            FROM project3
+            GROUP BY time_period
+            ORDER BY time_period
+        '''
+        result = query_database(query, (date_format,))
 
+        scatter_plot_data = [{'time_period': row['time_period'], 'count': row['count']} for row in result]
+
+        # Render the form with the dropdown menus
+        return render_template('dashboard.html', data=data, pet_types=pet_types, primary_breeds=primary_breeds, selected_pet_type=selected_pet_type, selected_primary_breed=selected_primary_breed, outcome_types_distribution=outcome_types_distribution, scatter_plot_data=scatter_plot_data)
 if __name__ == '__main__':
     app.run(debug=True)

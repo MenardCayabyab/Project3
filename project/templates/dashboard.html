@@ -39,13 +39,12 @@
             background-color: #4CAF50;
             color: white;
         }
+      
     </style>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="../static/outcome_types_chart.js"></script>
+    <script src="../static/scatter_plot.js"></script>
     <link rel="stylesheet" href="../static/style.css">
-    <script>
-      const outcomeTypesDistribution = JSON.parse('{{ outcome_types_distribution | tojson | safe }}');
-    </script>
 </head>
 <body>
   <h1>Pet Adoption Dashboard</h1>
@@ -61,6 +60,13 @@
       {% endfor %}
     </select>
     <input type="submit" value="Filter">
+  </form>
+  <form id="scatter-plot-filter">
+    <select id="time_filter">
+      <option value="month" selected>Month</option>
+      <option value="year">Year</option>
+    </select>
+    <button type="button" onclick="updateScatterPlot()">Update Scatter Plot</button>
   </form>
   {% if data %}
   <div class="table-wrapper">
@@ -102,10 +108,12 @@
     </table>
   </div>
   <div id="outcome-types-chart"></div>
+  <div id="scatter-plot"></div>
   {% endif %}
   <script>
     window.outcomeTypesDistribution = {{ outcome_types_distribution | tojson }};
+    const initialScatterPlotData = {{ scatter_plot_data | tojson | safe }};
+    window.scatterPlotData = initialScatterPlotData;
   </script>
-  <script src="your-javascript-file.js"></script>
 </body>
 </html>

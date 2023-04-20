@@ -14,7 +14,7 @@ function renderChart(outcomeTypesDistribution) {
     .padding(0.2);
 
   const y = d3.scaleLinear()
-    .domain([0, d3.sum(Object.values(outcomeTypesDistribution)) + 10])
+    .domain([0, d3.sum(Object.values(outcomeTypesDistribution))])
     .range([300, 0]);
 
   // Create and append the bars
