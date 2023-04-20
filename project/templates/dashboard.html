@@ -39,6 +39,15 @@
             background-color: #4CAF50;
             color: white;
         }
+
+        .chart-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .chart {
+            width: 49%;
+        }
       
     </style>
     <script src="https://d3js.org/d3.v7.min.js"></script>
@@ -61,13 +70,7 @@
     </select>
     <input type="submit" value="Filter">
   </form>
-  <form id="scatter-plot-filter">
-    <select id="time_filter">
-      <option value="month" selected>Month</option>
-      <option value="year">Year</option>
-    </select>
-    <button type="button" onclick="updateScatterPlot()">Update Scatter Plot</button>
-  </form>
+
   {% if data %}
   <div class="table-wrapper">
     <table>
@@ -78,12 +81,12 @@
           <th>Color</th>
           <th>Sex</th>
           <th>Size</th>
-          <th>Date of Birth</th>
+          <th>Date Of Birth</th>
           <th>Impound Number</th>
           <th>Kennel Number</th>
           <th>Animal ID</th>
           <th>Intake Date</th>
-          <th>Days in Shelter</th>
+          <th>Days In Shelter</th>
           <th>Intake Type</th>
           <th>Intake Subtype</th>
           <th>Outcome Type</th>
@@ -99,21 +102,57 @@
       <tbody>
         {% for row in data %}
         <tr>
-          {% for column in row %}
-          <td>{{ column }}</td>
-          {% endfor %}
+          <td>{{ row[0] }}</td>
+          <td>{{ row[1] }}</td>
+          <td>{{ row[2] }}</td>
+          <td>{{ row[3] }}</td>
+          <td>{{ row[4] }}</td>
+          <td>{{ row[5] }}</td>
+          <td>{{ row[6] }}</td>
+          <td>{{ row[7] }}</td>
+          <td>{{ row[8] }}</td>
+          <td>{{ row[9] }}</td>
+          <td>{{ row[10] }}</td>
+          <td>{{ row[11] }}</td>
+          <td>{{ row[12] }}</td>
+          <td>{{ row[13] }}</td>
+          <td>{{ row[14] }}</td>
+          <td>{{ row[15] }}</td>
+          <td>{{ row[16] }}</td>
+          <td>{{ row[17] }}</td>
+          <td>{{ row[18] }}</td>
+          <td>{{ row[19] }}</td>
+          <td>{{ row[20] }}</td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
-  <div id="outcome-types-chart"></div>
-  <div id="scatter-plot"></div>
   {% endif %}
+  <div class="chart-container">
+    <div id="outcome-types-chart" class="chart"></div>
+    <div id="scatter-plot" class="chart"></div>
+  </div>
+
   <script>
     window.outcomeTypesDistribution = {{ outcome_types_distribution | tojson }};
-    const initialScatterPlotData = {{ scatter_plot_data | tojson | safe }};
-    window.scatterPlotData = initialScatterPlotData;
+    window.scatterPlotData = {{ scatter_plot_data | tojson | safe }};
+
+    document.getElementById("pet_type").addEventListener("change", function() {
+        updateScatterPlot();
+    });
+
+    document.getElementById("primary_breed").addEventListener("change", function() {
+        updateScatterPlot();
+    });
+
+    function updateScatterPlot() {
+        const pet_type = document.getElementById("pet_type").value;
+        const primary_breed = document.getElementById("primary_breed").value;
+        drawScatterPlot(pet_type, primary_breed, scatterPlotData);
+    }
+
+    updateScatterPlot();
   </script>
 </body>
 </html>
