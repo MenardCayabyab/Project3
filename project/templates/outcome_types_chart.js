@@ -35,4 +35,4 @@ function renderChart(outcomeTypesDistribution) {
   svg.append("g")
     .call(d3.axisLeft(y));
 }
-
+renderChart({{ outcome_types_distribution | tojson }});
