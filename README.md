@@ -14,6 +14,7 @@ project subdirectories
 
 code
 -
+Contains the code used to create Database schema and code for cleaning raw data.
 
 
 resources
@@ -26,7 +27,7 @@ Contains code for the visualizations (plots and tables) in JavaScript, as well a
 
 templates
 -
-
+Contains chart properties that is HTML file.
 
 app.py
 -
