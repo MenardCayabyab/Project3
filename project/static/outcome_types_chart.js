@@ -3,7 +3,7 @@ function renderChart(outcomeTypesDistribution) {
   const svg = d3.select("#outcome-types-chart")
     .append("svg")
     .attr("width", 600)
-    .attr("height", 600)
+    .attr("height", 800)
     .append("g")
     .attr("transform", "translate(80, 80)");
 
