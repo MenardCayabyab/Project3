@@ -1,15 +1,18 @@
+# Import necessary libraries
 from flask import Flask, render_template, request
 from collections import Counter
 import sqlite3
 from datetime import datetime
 import calendar
 
+# Create Flask app and define the database file
 app = Flask(__name__)
 DATABASE = 'Project3.db'
 
+# Define the function to query the database
 def query_database(query, args=()):
     conn = sqlite3.connect(DATABASE)
-    conn.row_factory = sqlite3.Row  # Add this line
+    conn.row_factory = sqlite3.Row  # Access results by column name
     cur = conn.cursor()
     cur.execute(query, args)
     rows = cur.fetchall()
@@ -17,10 +20,12 @@ def query_database(query, args=()):
     conn.close()
     return rows
 
+# Define the function to count outcome types
 def count_outcome_types(data):
-    outcome_types = [row[13] for row in data if row[13] is not None]
-    return dict(Counter(outcome_types))
+    outcome_types = [row[13] for row in data if row[13] is not None]  # Extract outcome types from the data
+    return dict(Counter(outcome_types))  # Count the occurrences of each outcome type and return as a dictionary
 
+# Define the function to calculate age from date of birth
 def calculate_age(dob):
     if dob is None:
         return None
@@ -29,11 +34,12 @@ def calculate_age(dob):
     age = now.year - dob.year - ((now.month, now.day) < (dob.month, dob.day))
     return age
 
+# Define the Flask route for the dashboard
 @app.route('/', methods=['GET', 'POST'])
 def dashboard():
-    selected_pet_type = ''
-    selected_primary_breed = ''
-    breed_filter = request.args.get('breed_filter')
+    selected_pet_type = ''  # Initialize selected pet type
+    selected_primary_breed = ''  # Initialize selected primary breed
+    breed_filter = request.args.get('breed_filter')  # Get selected primary breed from dropdown menu
 
     # Get the list of pet types
     pet_types = [row[0] for row in query_database("SELECT DISTINCT Type FROM project3")]
@@ -79,7 +85,6 @@ def dashboard():
             'primaryBreed': primary_breed
         } for row in data]
         
-        # Render the template with the matching data
         return render_template('dashboard.html', pet_types=pet_types, primary_breeds=primary_breeds, selected_pet_type=selected_pet_type, selected_primary_breed=selected_primary_breed, data=data, outcome_types_distribution=outcome_types_distribution, scatter_plot_data=scatter_plot_data)
     else:
         # Get the list of primary breeds for the default pet type
@@ -107,5 +112,6 @@ def dashboard():
                             selected_pet_type=selected_pet_type, selected_primary_breed=selected_primary_breed,
                             outcome_types_distribution=outcome_types_distribution, scatter_plot_data=scatter_plot_data)
 
+# Run the Flask app in debug mode
 if __name__ == '__main__':
     app.run(debug=True)

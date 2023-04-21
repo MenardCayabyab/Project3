@@ -1,3 +1,6 @@
+# Pet Shelter Dashboard
+# HTML template for rendering the dashboard
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -133,11 +136,11 @@
     <div id="outcome-types-chart" class="chart"></div>
     <div id="scatter-plot" class="chart"></div>
   </div>
-
   <script>
     window.outcomeTypesDistribution = {{ outcome_types_distribution | tojson }};
     window.scatterPlotData = {{ scatter_plot_data | tojson | safe }};
 
+    // Add event listeners to the pet type and primary breed dropdown menus
     document.getElementById("pet_type").addEventListener("change", function() {
         updateScatterPlot();
     });
@@ -146,12 +149,14 @@
         updateScatterPlot();
     });
 
+    // Define function to update the scatter plot with new data based on the selected pet type and primary breed
     function updateScatterPlot() {
         const pet_type = document.getElementById("pet_type").value;
         const primary_breed = document.getElementById("primary_breed").value;
         drawScatterPlot(pet_type, primary_breed, scatterPlotData);
     }
 
+    // Update the scatter plot with the default data when the page loads
     updateScatterPlot();
   </script>
 </body>
