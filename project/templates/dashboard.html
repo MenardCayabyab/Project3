@@ -1,6 +1,3 @@
-# Pet Shelter Dashboard
-# HTML template for rendering the dashboard
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -39,7 +36,7 @@
         .table-wrapper thead {
             position: sticky;
             top: 0;
-            background-color: #4CAF50;
+            background-color: #ffffff;
             color: white;
         }
 
@@ -135,6 +132,8 @@
   <div class="chart-container">
     <div id="outcome-types-chart" class="chart"></div>
     <div id="scatter-plot" class="chart"></div>
+    <div id="scatter-plot">
+      <h2 id="scatter-plot-title">Scatter Plot Title</h2>
   </div>
   <script>
     window.outcomeTypesDistribution = {{ outcome_types_distribution | tojson }};

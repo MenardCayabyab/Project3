@@ -10,7 +10,7 @@ function drawScatterPlot(petType, primaryBreed, scatterPlotData) {
   const filteredData = filterData(petType, primaryBreed, scatterPlotData);
 
   // Set the dimensions and margins of the graph
-  const margin = { top: 40, right: 40, bottom: 80, left: 100 },
+  const margin = { top: 50, right: 40, bottom: 80, left: 100 },
     width = 460 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom;
 
